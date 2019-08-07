@@ -8,7 +8,10 @@ __pycache__
 *.npy
 *.gz
 *.ipynb
-validation_checkpoints/
+transition_checkpoints/
 *.ckpt
 *.pth
 .debug/
+generated_data/
+summaries/
+checkpoints/
