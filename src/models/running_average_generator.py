@@ -12,11 +12,3 @@ class AverageGenerator(Generator):
         for avg_param, cur_param in zip(self.parameters(),
                                         normal_generator.parameters()):
             avg_param.data = self.beta * avg_param + (1-self.beta) * cur_param
-
-    def extend(self, normal_generator):
-        super().extend()
-        for avg_param, cur_param in zip(self.new_parameters(),
-                                        normal_generator.new_parameters()):
-            assert avg_param.shape == cur_param.shape
-            avg_param.data = cur_param.data
-

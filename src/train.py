@@ -163,7 +163,7 @@ class Trainer:
             self.running_average_generator, None, opt_level=self.opt_level)
 
     def extend_running_average_generator(self):
-        self.running_average_generator.extend(self.generator)
+        self.running_average_generator.extend()
         to_cuda(self.running_average_generator)
         self.running_average_generator = amp.initialize(
             self.running_average_generator, None, opt_level=self.opt_level)

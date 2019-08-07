@@ -70,11 +70,8 @@ class NetworkWrapper(torch.nn.Module):
     def forward(self, *inputs):
         return self.forward_block(*inputs)
 
-    def extend(self, generator=None):
-        if generator is not None:
-            self.network.extend(generator)
-        else:
-            self.network.extend()
+    def extend(self):
+        self.network.extend()
         
     def update_transition_value(self, value):
         self.network.transition_value = value
