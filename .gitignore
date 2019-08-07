@@ -1,0 +1,14 @@
+.cache/
+data
+.vscode
+__pycache__
+*.zip
+*.out
+*.fid_cache
+*.npy
+*.gz
+*.ipynb
+validation_checkpoints/
+*.ckpt
+*.pth
+.debug/
