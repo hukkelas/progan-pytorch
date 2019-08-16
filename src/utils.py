@@ -95,12 +95,13 @@ def wrap_models(models):
     return NetworkWrapper(models)
 
 
-def compute_transition_value(global_step, is_transitioning, transition_iters):
+def compute_transition_value(global_step, is_transitioning, transition_iters, latest_switch):
     transition_variable = 1
     if is_transitioning:
-        transition_variable = ((global_step-1) % transition_iters) / transition_iters
+        diff = global_step - latest_switch
+        transition_variable = diff / transition_iters
+    assert 0 <= transition_variable <= 1
     return transition_variable
-
 
 def get_transition_value(x_old, x_new, transition_variable):
     assert x_old.shape == x_new.shape, "Old shape: {}, New: {}".format(x_old.shape, x_new.shape)
