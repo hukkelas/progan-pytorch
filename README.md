@@ -2,6 +2,11 @@
 
 A pytorch implementation of the popular paper "[Progressive growing of gans for improved quality, stability, and variation](https://arxiv.org/abs/1710.10196)" ([Official tensorflow code](https://github.com/tkarras/progressive_growing_of_gans)).
 
+## Current progress
+**Results from a 256-filter model on 128x128:**
+![](examples/fakes7502784_128x128.jpg)
+
+
 ## Features
 
 - Fully implemented progressive growing of GANs to reproduce the results on the CelebA-HQ dataset.
