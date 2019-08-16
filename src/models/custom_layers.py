@@ -73,19 +73,28 @@ class UpSamplingBlock(nn.Module):
 
 class MinibatchStdLayer(nn.Module):
 
-    def __init__(self):
+    def __init__(self, group_size=4):
         super().__init__()
+        self.group_size = group_size
 
-    def forward(self, x, group_size=4):
-        group_size = min(group_size, x.shape[0]) # group_size must be smaller than minibatch size
-        channels, height, width = x.shape[1:]
-        y = x.view(group_size, -1, *x.shape[1:]) # Add extra "group" dimension and let minibatch size compensate
-        y = y.float()
-        y -= y.mean(dim=0, keepdim=True)
-        y = y.pow(2).mean(dim=0)
-        y = (y + 1e-8).sqrt()
-        # Mean over minibatch, height and width
-        y = y.mean(dim=[1, 2, 3], keepdim=True)
-        # Tiling over (mb_size, channels, height, width)
-        y = y.repeat(group_size, 1, height, width)
-        return torch.cat((x, y), dim=1)
+    # Implementation from:
+    # https://github.com/facebookresearch/pytorch_GAN_zoo/blob/master/models/networks/custom_layers.py
+    def forward(self, x):
+        size = x.size()
+        subGroupSize = min(size[0], self.group_size)
+        if size[0] % subGroupSize != 0:
+            subGroupSize = size[0]
+        G = int(size[0] / subGroupSize)
+        if subGroupSize > 1:
+            y = x.view(-1, subGroupSize, size[1], size[2], size[3])
+            y = torch.var(y, 1)
+            y = torch.sqrt(y + 1e-8)
+            y = y.view(G, -1)
+            y = torch.mean(y, 1).view(G, 1)
+            y = y.expand(G, size[2]*size[3]).view((G, 1, 1, size[2], size[3]))
+            y = y.expand(G, subGroupSize, -1, -1, -1)
+            y = y.contiguous().view((-1, 1, size[2], size[3]))
+        else:
+            y = torch.zeros(x.size(0), 1, x.size(2), x.size(3), device=x.device)
+    
+        return torch.cat([x, y], dim=1)
